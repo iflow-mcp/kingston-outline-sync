@@ -3,7 +3,8 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import dotenv from 'dotenv';
 
 import type {
@@ -25,6 +26,10 @@ import { loadConfig } from './utils/config.js';
 dotenv.config();
 
 const program = new Command();
+
+// Get __dirname in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Get version from package.json
 const packageJson = JSON.parse(
