@@ -23,23 +23,26 @@ export async function mcpCommand(
     outlineCollections = [];
   }
 
+  // Create a modified config for MCP use
+  const mcpConfig: Config = { ...config };
+
   // If no collections in config and command line collections are provided, create virtual collections
   if (config.collections.length === 0 && options.collections && options.collections.length > 0) {
-    config.collections = options.collections.map((urlId) => ({
+    mcpConfig.collections = options.collections.map((urlId) => ({
       urlId,
       directory: urlId,
       mcp: { enabled: true, readOnly: false },
     }));
   }
 
-  const collections = getCollectionConfigs(outlineCollections, config, {
+  const collections = getCollectionConfigs(outlineCollections, mcpConfig, {
     collectionUrlIdsFilter: options.collections,
     outputDir: options.dir,
   });
   const version = await getPackageVersion();
 
   // Initialize and start MCP server
-  const server = new MCPServer(config, collections, version, options);
+  const server = new MCPServer(mcpConfig, collections, version, options);
   await server.start();
 
   // Keep the process running
