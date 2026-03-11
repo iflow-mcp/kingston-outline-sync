@@ -4,6 +4,7 @@ import { getCollectionConfigs } from '@src/utils/collection-filter.js';
 import { getPackageVersion } from '@src/utils/version.js';
 
 import type { Config, McpOptions } from '../types/config.js';
+import type { DocumentCollection } from '@src/types/collections.js';
 
 /**
  * Start MCP server for AI assistant integration
@@ -13,7 +14,15 @@ export async function mcpCommand(
   options: McpOptions,
 ): Promise<void> {
   const service = getOutlineService(config.outline.apiUrl);
-  const outlineCollections = await service.getCollections();
+  let outlineCollections: DocumentCollection[];
+
+  try {
+    outlineCollections = await service.getCollections();
+  } catch (error) {
+    console.warn('Warning: Failed to fetch collections from Outline API, using config collections');
+    outlineCollections = [];
+  }
+
   const collections = getCollectionConfigs(outlineCollections, config, {
     collectionUrlIdsFilter: options.collections,
     outputDir: options.dir,

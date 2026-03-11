@@ -105,11 +105,6 @@ export class MCPServer {
       }
     });
 
-    app.on('close', () => {
-      transport.close().catch(console.error);
-      this.server.close().catch(console.error);
-    });
-
     const port = this.options.port ?? this.config.mcp.port;
     app.listen(port, () => {
       console.info(

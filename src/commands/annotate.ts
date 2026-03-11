@@ -55,7 +55,7 @@ export async function getTitleDescription(
     new HumanMessage(content),
   ]);
 
-  return result;
+  return result as { title: string; description: string };
 }
 
 export async function annotateFile(

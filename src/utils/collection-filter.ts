@@ -29,6 +29,31 @@ export function getCollectionConfigs(
 ): DocumentCollectionWithConfig[] {
   const { collectionUrlIdsFilter = [], outputDir = config.outputDir } =
     overrides;
+
+  // If no collections from API, create virtual collections from config
+  if (allCollections.length === 0 && config.collections.length > 0) {
+    return config.collections
+      .filter(
+        (collectionConfig) =>
+          collectionUrlIdsFilter.length === 0 ||
+          collectionUrlIdsFilter.includes(collectionConfig.urlId),
+      )
+      .map((collectionConfig) => {
+        const defaultName = createSafeFilename(collectionConfig.urlId);
+        return {
+          id: collectionConfig.urlId,
+          urlId: collectionConfig.urlId,
+          name: collectionConfig.directory ?? defaultName,
+          description: null,
+          outputDirectory: path.join(
+            path.resolve(outputDir),
+            collectionConfig.directory ?? defaultName,
+          ),
+          mcp: collectionConfig.mcp ?? { enabled: false, readOnly: false },
+        };
+      });
+  }
+
   // check if all config collections are present in the allCollections array
   const missingConfigCollections = config.collections.filter(
     (c) => !allCollections.some((ac) => ac.urlId === c.urlId),
