@@ -2,6 +2,8 @@
 
 import chalk from 'chalk';
 import { Command } from 'commander';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import dotenv from 'dotenv';
 
 import type {
@@ -24,6 +26,11 @@ dotenv.config();
 
 const program = new Command();
 
+// Get version from package.json
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, '../package.json'), 'utf-8')
+);
+
 interface GlobalOptions {
   config?: string;
   verbose?: boolean;
@@ -34,7 +41,7 @@ interface GlobalOptions {
 program
   .name('outline-sync')
   .description('Sync Outline collections with local file systems')
-  .version('0.1.0');
+  .version(packageJson.version);
 
 // Global options
 program
