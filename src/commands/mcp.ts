@@ -23,6 +23,15 @@ export async function mcpCommand(
     outlineCollections = [];
   }
 
+  // If no collections in config and command line collections are provided, create virtual collections
+  if (config.collections.length === 0 && options.collections && options.collections.length > 0) {
+    config.collections = options.collections.map((urlId) => ({
+      urlId,
+      directory: urlId,
+      mcp: { enabled: true, readOnly: false },
+    }));
+  }
+
   const collections = getCollectionConfigs(outlineCollections, config, {
     collectionUrlIdsFilter: options.collections,
     outputDir: options.dir,
